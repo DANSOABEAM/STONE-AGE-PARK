@@ -1,187 +1,367 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "tourdb");
 
-/* =========================
-   HANDLE BOOKING SUBMISSION
-========================= */
-if(isset($_POST['book'])){
+$conn = new mysqli("localhost","root","","tourdb");
 
-    $name = $_POST['name'];
+if($conn->connect_error){
+    die("DB Error");
+}
+
+if(isset($_POST['bookTour'])){
+
+    $fullname = $_POST['fullname'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
-    $plan = $_POST['plan'];
+    $country = $_POST['country'];
+    $tour_package = $_POST['tour_package'];
+    $start_date = $_POST['start_date'];
+    $end_date = $_POST['end_date'];
+    $people = $_POST['people'];
+    $rooms = $_POST['rooms'];
+    $hotel = $_POST['hotel'];
+    $reservation = $_POST['reservation'];
+    $special_note = $_POST['special_note'];
 
-    // Save to DB
-    $stmt = $conn->prepare("INSERT INTO bookings (name,email,phone,plan) VALUES (?,?,?,?)");
-    $stmt->bind_param("ssss",$name,$email,$phone,$plan);
+    $stmt = $conn->prepare("INSERT INTO bookings(
+        fullname,email,phone,country,tour_package,
+        start_date,end_date,people,rooms,hotel,reservation,special_note
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+
+    $stmt->bind_param(
+        "ssssssiissss",
+        $fullname,$email,$phone,$country,$tour_package,
+        $start_date,$end_date,$people,$rooms,$hotel,$reservation,$special_note
+    );
+
     $stmt->execute();
 
-    $message = "New Tour Booking:\nName: $name\nEmail: $email\nPhone: $phone\nPlan: $plan";
+    $msg = "New Booking: $fullname - $tour_package";
 
-    /* ================= EMAIL ================= */
-    mail("yourmail@gmail.com","New Tour Booking",$message,"From: tour@system.com");
+    mail("yourgmail@gmail.com","Tour Booking",$msg,"From: tour@site.com");
 
-    /* ================= SMS ================= */
-    $payload = [
-        "sender" => "TourSys",
-        "message" => $message,
-        "recipient" => "YOUR_PHONE_NUMBER"
-    ];
-
-    $ch = curl_init("https://app.giantsms.com/api/v2/sms");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Authorization: YOUR_API_KEY",
-        "Content-Type: application/json"
-    ]);
-    curl_exec($ch);
-    curl_close($ch);
-
-    echo "<script>alert('Booking Successful!');</script>";
+    echo "<script>alert('Booking Successful');</script>";
 }
+
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tour Booking System</title>
 
 <style>
-body{
-    font-family: Arial;
-    margin:0;
-    background:#0f172a;
-    color:white;
-    padding:40px;
+
+/* ================= NAVBAR ================= */
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 8%;
+    background:rgba(0,0,0,0.7);
+    position:fixed;
+    width:100%;
+    top:0;
+    z-index:1000;
+    backdrop-filter:blur(10px);
 }
 
-.container{
+.navbar h2{
+    color:#00d9ff;
+}
+
+.navbar ul{
+    list-style:none;
     display:flex;
     gap:20px;
+}
+
+.navbar ul li{
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.navbar ul li:hover{
+    color:#00d9ff;
+}
+
+/* ================= HERO BACKGROUND ================= */
+
+.hero{
+    height:70vh;
+    background:
+    linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
+    background-size:cover;
+    background-position:center;
+    display:flex;
     justify-content:center;
-    flex-wrap:wrap;
+    align-items:center;
+    text-align:center;
+    color:white;
+    padding-top:60px;
+}
+
+.hero h1{
+    font-size:45px;
+    animation:fade 1s ease;
+}
+
+@keyframes fade{
+    from{opacity:0; transform:translateY(-20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+/* ================= TOUR GRID ================= */
+
+.tours{
+    padding:60px 8%;
+    background:#07121f;
+}
+
+.tour-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
 }
 
 .card{
-    background:#1e293b;
-    width:280px;
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
+    background:#111b2d;
+    border-radius:14px;
+    overflow:hidden;
     transition:0.3s;
 }
 
 .card:hover{
-    transform:scale(1.05);
+    transform:translateY(-8px);
+}
+
+.card img{
+    width:100%;
+    height:160px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:15px;
+    text-align:center;
 }
 
 .price{
-    color:#38bdf8;
-    font-size:28px;
+    color:#00d9ff;
+    font-size:20px;
+    margin:8px 0;
 }
 
 button{
-    background:#38bdf8;
-    border:none;
-    padding:10px;
     width:100%;
-    border-radius:10px;
-    cursor:pointer;
+    padding:10px;
+    border:none;
+    background:#00d9ff;
+    color:black;
     font-weight:bold;
+    cursor:pointer;
+    border-radius:8px;
 }
 
-/* FORM */
+/* ================= FORM OVERLAY ================= */
+
 .overlay{
     position:fixed;
     top:0;
     left:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.7);
+    background:rgba(0,0,0,0.85);
     display:none;
     justify-content:center;
     align-items:center;
+    z-index:1000;
 }
 
 .form-box{
+    width:95%;
+    max-width:900px;
     background:white;
-    color:black;
     padding:20px;
-    border-radius:10px;
-    width:300px;
+    border-radius:12px;
 }
 
-input{
-    width:100%;
+/* GRID FORM */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea{
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:13px;
+}
+
+textarea{
+    height:70px;
+    grid-column:span 3;
+}
+
+.full{
+    grid-column:span 3;
+}
+
+.submit-btn{
+    grid-column:span 3;
     padding:10px;
-    margin:8px 0;
-}
-.close{
-    float:right;
+    background:#00d9ff;
+    border:none;
+    font-weight:bold;
     cursor:pointer;
-    color:red;
+    border-radius:8px;
 }
+
+/* ================= FOOTER ================= */
+
+.footer{
+    background:#050a12;
+    color:white;
+    text-align:center;
+    padding:30px;
+    margin-top:50px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+    textarea,.full,.submit-btn{
+        grid-column:1;
+    }
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h1 style="text-align:center;">Tour Booking System</h1>
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>TravelPro</h2>
+    <ul>
+        <li>Home</li>
+        <li>Tours</li>
+        <li>Bookings</li>
+        <li>Contact</li>
+    </ul>
+</div>
 
-<!-- CARDS -->
-<div class="container">
+<!-- HERO -->
+<div class="hero">
+    <h1>Explore The World With Us</h1>
+</div>
+
+<!-- TOURS -->
+<div class="tours">
+
+<div class="tour-grid">
 
 <div class="card">
-<h2>Basic Tour</h2>
-<p class="price">$50</p>
-<button onclick="openForm('Basic Tour')">Book Now</button>
+<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">
+<div class="card-content">
+<h3>Beach Tour</h3>
+<div class="price">$250</div>
+<button onclick="openForm('Beach Tour')">Book</button>
+</div>
 </div>
 
 <div class="card">
-<h2>Standard Tour</h2>
-<p class="price">$120</p>
-<button onclick="openForm('Standard Tour')">Book Now</button>
+<img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b">
+<div class="card-content">
+<h3>Mountain Tour</h3>
+<div class="price">$450</div>
+<button onclick="openForm('Mountain Tour')">Book</button>
+</div>
 </div>
 
 <div class="card">
-<h2>Premium Tour</h2>
-<p class="price">$250</p>
-<button onclick="openForm('Premium Tour')">Book Now</button>
+<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+<div class="card-content">
+<h3>Safari Tour</h3>
+<div class="price">$700</div>
+<button onclick="openForm('Safari Tour')">Book</button>
+</div>
+</div>
+
 </div>
 
 </div>
 
 <!-- FORM -->
 <div class="overlay" id="overlay">
+
 <div class="form-box">
 
-<span class="close" onclick="closeForm()">X</span>
-
-<h3>Book Tour</h3>
-
 <form method="POST">
-<input type="text" name="name" placeholder="Name" required>
-<input type="email" name="email" placeholder="Email" required>
-<input type="tel" name="phone" placeholder="Phone" required>
 
-<input type="hidden" name="plan" id="plan">
+<div class="form-grid">
 
-<button name="book">Submit</button>
+<input name="fullname" placeholder="Full Name" required>
+<input name="email" placeholder="Email" required>
+<input name="phone" placeholder="Phone" required>
+
+<input name="country" placeholder="Country" required>
+
+<input type="date" name="start_date" required>
+<input type="date" name="end_date" required>
+
+<input type="number" name="people" placeholder="People">
+<input type="number" name="rooms" placeholder="Rooms">
+
+<select name="hotel">
+<option>Luxury Hotel</option>
+<option>Standard Hotel</option>
+</select>
+
+<select name="reservation">
+<option>Single</option>
+<option>Group</option>
+</select>
+
+<input type="hidden" name="tour_package" id="tour">
+
+<textarea name="special_note" placeholder="Message"></textarea>
+
+<button class="submit-btn" name="bookTour">Confirm Booking</button>
+
+</div>
+
 </form>
 
 </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <p>© 2026 TravelPro | All Rights Reserved</p>
 </div>
 
 <script>
-function openForm(plan){
+
+function openForm(tour){
     document.getElementById("overlay").style.display="flex";
-    document.getElementById("plan").value = plan;
+    document.getElementById("tour").value=tour;
 }
-function closeForm(){
-    document.getElementById("overlay").style.display="none";
-}
+
 </script>
 
 </body>
