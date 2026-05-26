@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>About | Abetifi Stone Age Park</title>
+
+<!-- GOOGLE FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- FONT AWESOME -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* NAVBAR */
+
+header{
+    width:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:1000;
+    padding:18px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(10px);
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+    color:#facc15;
+}
+
+nav ul{
+    display:flex;
+    gap:30px;
+    list-style:none;
+}
+
+nav ul li a{
+    color:white;
+    text-decoration:none;
+    transition:0.4s;
+    position:relative;
+}
+
+nav ul li a::after{
+    content:'';
+    position:absolute;
+    width:0%;
+    height:2px;
+    background:#facc15;
+    left:0;
+    bottom:-5px;
+    transition:0.4s;
+}
+
+nav ul li a:hover::after{
+    width:100%;
+}
+
+.menu-btn{
+    display:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+/* HERO */
+
+.about-hero{
+    width:100%;
+    height:70vh;
+    background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)),
+    url('https://images.unsplash.com/photo-1469474968028-56623f02e42e') center/cover no-repeat;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+}
+
+.about-hero-content{
+    animation:fadeIn 2s ease;
+}
+
+.about-hero-content h1{
+    font-size:65px;
+    margin-bottom:20px;
+}
+
+.about-hero-content p{
+    color:#ddd;
+    max-width:700px;
+    margin:auto;
+    line-height:1.8;
+}
+
+/* SECTION */
+
+section{
+    padding:100px 8%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:60px;
+}
+
+.section-title h2{
+    font-size:42px;
+    color:#facc15;
+}
+
+.section-title p{
+    color:#ccc;
+    margin-top:10px;
+}
+
+/* HISTORY */
+
+.history-container{
+    display:flex;
+    gap:50px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.history-image{
+    flex:1;
+}
+
+.history-image img{
+    width:100%;
+    border-radius:20px;
+    transition:0.4s;
+}
+
+.history-image img:hover{
+    transform:scale(1.03);
+}
+
+.history-text{
+    flex:1;
+}
+
+.history-text h2{
+    color:#facc15;
+    margin-bottom:20px;
+    font-size:40px;
+}
+
+.history-text p{
+    color:#ddd;
+    line-height:1.9;
+    margin-bottom:20px;
+}
+
+/* SIGNIFICANCE */
+
+.significance{
+    background:#111827;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+}
+
+.card{
+    background:#1e293b;
+    padding:35px;
+    border-radius:20px;
+    transition:0.4s;
+    text-align:center;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 10px 30px rgba(250,204,21,0.3);
+}
+
+.card i{
+    font-size:45px;
+    color:#facc15;
+    margin-bottom:20px;
+}
+
+.card h3{
+    margin-bottom:15px;
+}
+
+.card p{
+    color:#ccc;
+    line-height:1.8;
+}
+
+/* MISSION & VISION */
+
+.mv-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:40px;
+}
+
+.mv-box{
+    background:#1e293b;
+    padding:40px;
+    border-radius:25px;
+    transition:0.4s;
+}
+
+.mv-box:hover{
+    transform:translateY(-10px);
+}
+
+.mv-box h2{
+    color:#facc15;
+    margin-bottom:20px;
+}
+
+.mv-box p{
+    line-height:1.9;
+    color:#ddd;
+}
+
+/* CULTURE */
+
+.culture{
+    background:#111827;
+}
+
+.culture-container{
+    display:flex;
+    align-items:center;
+    gap:50px;
+    flex-wrap:wrap;
+}
+
+.culture-text{
+    flex:1;
+}
+
+.culture-text h2{
+    color:#facc15;
+    font-size:40px;
+    margin-bottom:20px;
+}
+
+.culture-text p{
+    line-height:1.9;
+    color:#ddd;
+}
+
+.culture-image{
+    flex:1;
+}
+
+.culture-image img{
+    width:100%;
+    border-radius:20px;
+}
+
+/* CTA */
+
+.cta{
+    text-align:center;
+    padding:120px 8%;
+    background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+    url('https://images.unsplash.com/photo-1501785888041-af3ef285b470') center/cover no-repeat;
+}
+
+.cta h2{
+    font-size:50px;
+    margin-bottom:20px;
+}
+
+.cta p{
+    color:#ddd;
+    margin-bottom:30px;
+}
+
+.btn{
+    padding:15px 40px;
+    border-radius:50px;
+    text-decoration:none;
+    background:#facc15;
+    color:black;
+    font-weight:600;
+    transition:0.4s;
+    display:inline-block;
+}
+
+.btn:hover{
+    transform:translateY(-5px);
+    background:white;
+}
+
+/* FOOTER */
+
+footer{
+    background:#020617;
+    padding:50px 8%;
+    text-align:center;
+}
+
+.socials{
+    margin:25px 0;
+}
+
+.socials i{
+    font-size:22px;
+    margin:0 10px;
+    color:#facc15;
+    transition:0.4s;
+    cursor:pointer;
+}
+
+.socials i:hover{
+    transform:translateY(-5px);
+}
+
+/* ANIMATION */
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(50px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+
+@media(max-width:991px){
+
+    nav{
+        position:absolute;
+        top:80px;
+        right:-100%;
+        background:#111827;
+        width:250px;
+        border-radius:10px;
+        transition:0.4s;
+    }
+
+    nav.active{
+        right:8%;
+    }
+
+    nav ul{
+        flex-direction:column;
+        padding:20px;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .about-hero-content h1{
+        font-size:45px;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .about-hero-content h1{
+        font-size:35px;
+    }
+
+    .section-title h2{
+        font-size:30px;
+    }
+
+    .history-text h2,
+    .culture-text h2{
+        font-size:30px;
+    }
+
+    .cta h2{
+        font-size:35px;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+
+<header>
+
+<div class="logo">StoneAge Park</div>
+
+<nav id="nav">
+<ul>
+<li><a href="home.html">Home</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="explore.html">Explore</a></li>
+<li><a href="gallery.html">Gallery</a></li>
+<li><a href="booking.html">Booking</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+</nav>
+
+<div class="menu-btn" id="menuBtn">
+<i class="fas fa-bars"></i>
+</div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="about-hero">
+
+<div class="about-hero-content">
+<h1>About The Park</h1>
+
+<p>
+Discover the rich history, heritage, and cultural significance of Abetifi Stone Age Park — one of Ghana’s most remarkable archaeological and eco-tourism destinations.
+</p>
+
+</div>
+
+</section>
+
+<!-- HISTORY -->
+
+<section>
+
+<div class="history-container">
+
+<div class="history-image">
+<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+</div>
+
+<div class="history-text">
+
+<h2>History of The Park</h2>
+
+<p>
+Abetifi Stone Age Park is believed to preserve evidence of ancient human existence dating back thousands of years. The caves and rock formations found within the park provide insight into how early humans lived, survived, and interacted with nature during the Stone Age era.
+Abetifi Stone Age Park is believed to preserve evidence of ancient human existence dating back thousands of years. The caves and rock formations found within the park provide insight into how early humans lived, survived, and interacted with nature during the Stone Age era.
+Abetifi Stone Age Park is believed to preserve evidence of ancient human existence dating back thousands of years. The caves and rock formations found within the park provide insight into how early humans lived, survived, and interacted with nature during the Stone Age era.
+
+</p>
+
+<p>
+The park has become one of Ghana’s important historical and tourism landmarks, attracting visitors, researchers, students, and adventure lovers from different parts of the world.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SIGNIFICANCE -->
+
+<section class="significance">
+
+<div class="section-title">
+<h2>Stone Age Significance</h2>
+<p>Why the park matters historically and culturally</p>
+</div>
+
+<div class="cards">
+
+<div class="card">
+<i class="fas fa-mountain"></i>
+<h3>Ancient Caves</h3>
+<p>
+Explore caves believed to have sheltered early human communities thousands of years ago.
+</p>
+</div>
+
+<div class="card">
+<i class="fas fa-landmark"></i>
+<h3>Historical Heritage</h3>
+<p>
+The park preserves important archaeological and cultural evidence about Ghana’s ancient history.
+</p>
+</div>
+
+<div class="card">
+<i class="fas fa-leaf"></i>
+<h3>Eco Tourism</h3>
+<p>
+The park combines nature, culture, and tourism to create a unique eco-tourism experience.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- MISSION & VISION -->
+
+<section>
+
+<div class="section-title">
+<h2>Mission & Vision</h2>
+<p>Preserving history while promoting tourism</p>
+</div>
+
+<div class="mv-container">
+
+<div class="mv-box">
+
+<h2>Our Mission</h2>
+
+<p>
+To preserve and promote the archaeological, cultural, and natural heritage of Abetifi Stone Age Park while creating unforgettable educational and tourism experiences for visitors.
+</p>
+
+</div>
+
+<div class="mv-box">
+
+<h2>Our Vision</h2>
+
+<p>
+To become one of Africa’s leading historical and eco-tourism destinations, attracting visitors globally and inspiring appreciation for Ghana’s ancient heritage.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CULTURAL IMPORTANCE -->
+
+<section class="culture">
+
+<div class="culture-container">
+
+<div class="culture-text">
+
+<h2>Cultural Importance</h2>
+
+<p>
+The park represents an important part of Ghana’s cultural identity and historical legacy. It highlights the relationship between ancient communities and nature while preserving stories, traditions, and heritage for future generations.
+</p>
+
+<p>
+Visitors not only experience nature and adventure but also gain deeper understanding of Ghana’s rich cultural and archaeological history.
+</p>
+
+</div>
+
+<div class="culture-image">
+<img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e">
+</div>
+
+</div>
+
+</section>
+
+<!-- CTA -->
+
+<section class="cta">
+
+<h2>Experience History Like Never Before</h2>
+
+<p>
+Explore the beauty, culture, and ancient heritage of Abetifi Stone Age Park today.
+</p>
+
+<a href="booking.html" class="btn">Book Your Visit</a>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+<h2>StoneAge Park</h2>
+
+<div class="socials">
+
+<i class="fab fa-facebook"></i>
+<i class="fab fa-instagram"></i>
+<i class="fab fa-youtube"></i>
+<i class="fab fa-tiktok"></i>
+
+</div>
+
+<p>
+© 2026 Abetifi Stone Age Park. All Rights Reserved.
+</p>
+
+</footer>
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+const menuBtn = document.getElementById('menuBtn');
+const nav = document.getElementById('nav');
+
+menuBtn.onclick = () => {
+    nav.classList.toggle('active');
+}
+
+</script>
+
+</body>
+</html>

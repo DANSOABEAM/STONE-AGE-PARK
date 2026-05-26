@@ -1,0 +1,846 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gallery | Abetifi Stone Age Park</title>
+
+<!-- GOOGLE FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- FONT AWESOME -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+
+/* =========================
+   GLOBAL STYLING
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:18px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(10px);
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+    color:#facc15;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:30px;
+}
+
+nav ul li a{
+    color:white;
+    text-decoration:none;
+    position:relative;
+    transition:0.4s;
+}
+
+nav ul li a::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#facc15;
+    transition:0.4s;
+}
+
+nav ul li a:hover::after{
+    width:100%;
+}
+
+.menu-btn{
+    display:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.hero{
+    width:100%;
+    height:75vh;
+    background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)),
+    url('wofa.jpg') center/cover no-repeat;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+}
+
+.hero-content{
+    animation:fadeIn 1.5s ease;
+}
+
+.hero-content h1{
+    font-size:65px;
+    margin-bottom:20px;
+}
+
+.hero-content p{
+    max-width:750px;
+    line-height:1.8;
+    color:#ddd;
+}
+
+/* =========================
+   SECTION TITLE
+========================= */
+
+section{
+    padding:100px 8%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:60px;
+}
+
+.section-title h2{
+    font-size:42px;
+    color:#facc15;
+}
+
+.section-title p{
+    margin-top:10px;
+    color:#ccc;
+}
+
+/* =========================
+   FILTER BUTTONS
+========================= */
+
+.filters{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:50px;
+}
+
+.filter-btn{
+    padding:12px 28px;
+    border:none;
+    border-radius:50px;
+    background:#1e293b;
+    color:white;
+    cursor:pointer;
+    transition:0.4s;
+    font-size:15px;
+    font-weight:500;
+}
+
+.filter-btn:hover,
+.filter-btn.active{
+    background:#facc15;
+    color:black;
+}
+
+/* =========================
+   GALLERY GRID
+========================= */
+
+.gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+.gallery-item{
+    position:relative;
+    overflow:hidden;
+    border-radius:25px;
+    cursor:pointer;
+    animation:fadeScale 0.5s ease;
+}
+
+.gallery-item img{
+    width:100%;
+    height:320px;
+    object-fit:cover;
+    border-radius:25px;
+    transition:0.5s;
+}
+
+.gallery-item:hover img{
+    transform:scale(1.1);
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    opacity:0;
+    transition:0.4s;
+}
+
+.gallery-item:hover .overlay{
+    opacity:1;
+}
+
+.overlay i{
+    font-size:40px;
+    color:#facc15;
+}
+
+.gallery-item.hide{
+    display:none;
+}
+
+/* =========================
+   DRONE SECTION
+========================= */
+
+.drone-section{
+    background:#111827;
+}
+
+.drone-container{
+    display:flex;
+    gap:50px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.drone-text{
+    flex:1;
+}
+
+.drone-text h2{
+    font-size:42px;
+    color:#facc15;
+    margin-bottom:20px;
+}
+
+.drone-text p{
+    line-height:1.9;
+    color:#ddd;
+    margin-bottom:20px;
+}
+
+.drone-video{
+    flex:1;
+}
+
+.drone-video video{
+    width:100%;
+    height:350px;
+    object-fit:cover;
+    border-radius:25px;
+}
+
+/* =========================
+   VISITOR SECTION
+========================= */
+
+.visitors{
+    background:white;
+}
+
+.visitors .section-title p{
+    color:#444;
+}
+
+.visitor-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+}
+
+.visitor-card{
+    background:#1e293b;
+    padding:20px;
+    border-radius:25px;
+    transition:0.4s;
+}
+
+.visitor-card:hover{
+    transform:translateY(-10px);
+}
+
+.visitor-card img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+.visitor-card h3{
+    color:#facc15;
+    margin-bottom:10px;
+}
+
+.visitor-card p{
+    color:#ddd;
+    line-height:1.8;
+}
+
+/* =========================
+   CTA SECTION
+========================= */
+
+.cta{
+    text-align:center;
+    padding:120px 8%;
+    background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+    url('abeam.jpg') center/cover no-repeat;
+}
+
+.cta h2{
+    font-size:50px;
+    margin-bottom:20px;
+}
+
+.cta p{
+    color:#ddd;
+    margin-bottom:30px;
+}
+
+.btn{
+    display:inline-block;
+    padding:15px 40px;
+    background:#facc15;
+    color:black;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.4s;
+}
+
+.btn:hover{
+    background:white;
+    transform:translateY(-5px);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    background:#020617;
+    padding:50px 8%;
+    text-align:center;
+}
+
+footer p{
+    color:#ccc;
+}
+
+.socials{
+    margin:25px 0;
+}
+
+.socials i{
+    margin:0 10px;
+    color:#facc15;
+    font-size:22px;
+    cursor:pointer;
+    transition:0.4s;
+}
+
+.socials i:hover{
+    transform:translateY(-5px);
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes fadeScale{
+    from{
+        opacity:0;
+        transform:scale(0.9);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media(max-width:991px){
+
+    nav{
+        position:absolute;
+        top:80px;
+        right:-100%;
+        width:250px;
+        background:#111827;
+        border-radius:10px;
+        transition:0.4s;
+    }
+
+    nav.active{
+        right:8%;
+    }
+
+    nav ul{
+        flex-direction:column;
+        padding:20px;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .hero-content h1{
+        font-size:45px;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .drone-container{
+        flex-direction:column;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .hero-content h1{
+        font-size:35px;
+    }
+
+    .section-title h2,
+    .drone-text h2{
+        font-size:30px;
+    }
+
+    .cta h2{
+        font-size:35px;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+<div class="logo">StoneAge Park</div>
+
+<nav id="nav">
+
+<ul>
+<li><a href="home.html">Home</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="explore.html">Explore</a></li>
+<li><a href="gallery.html">Gallery</a></li>
+<li><a href="booking.html">Booking</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+
+</nav>
+
+<div class="menu-btn" id="menuBtn">
+<i class="fas fa-bars"></i>
+</div>
+
+</header>
+
+<!-- =========================
+     HERO SECTION
+========================= -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>Gallery & Memories</h1>
+
+<p>
+Explore beautiful moments, drone shots, visitor experiences, and breathtaking scenery from Abetifi Stone Age Park.
+</p>
+
+</div>
+
+</section>
+
+<!-- =========================
+     GALLERY SECTION
+========================= -->
+
+<section>
+
+<div class="section-title">
+
+<h2>Photo Gallery</h2>
+
+<p>
+Browse through our amazing collections and unforgettable moments.
+</p>
+
+</div>
+
+<!-- FILTER BUTTONS -->
+
+<div class="filters">
+
+<button class="filter-btn active" data-filter="all">
+All
+</button>
+
+<button class="filter-btn" data-filter="nature">
+Nature
+</button>
+
+<button class="filter-btn" data-filter="caves">
+Caves
+</button>
+
+<button class="filter-btn" data-filter="visitors">
+Visitors
+</button>
+
+<button class="filter-btn" data-filter="drone">
+Drone Views
+</button>
+
+</div>
+
+<!-- GALLERY GRID -->
+
+<div class="gallery-grid">
+
+<!-- NATURE -->
+
+<div class="gallery-item nature">
+<img src="IMG_8063.JPG">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+<div class="gallery-item nature">
+<img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+<!-- CAVES -->
+
+<div class="gallery-item caves">
+<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+<div class="gallery-item caves">
+<img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+<!-- VISITORS -->
+
+<div class="gallery-item visitors">
+<img src="tho.jpg">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+<div class="gallery-item visitors">
+<img src="wings.jpg">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+<!-- DRONE -->
+
+<div class="gallery-item drone">
+<img src="geng.jpg">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+<div class="gallery-item drone">
+<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">
+<div class="overlay">
+<i class="fas fa-search-plus"></i>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     DRONE SECTION
+========================= -->
+
+<section class="drone-section">
+
+<div class="drone-container">
+
+<div class="drone-text">
+
+<h2>Drone View Experience</h2>
+
+<p>
+Enjoy breathtaking aerial views of Abetifi Stone Age Park captured through cinematic drone photography and videos.
+</p>
+
+<p>
+Discover mountains, forests, caves, and beautiful landscapes from a unique perspective.
+</p>
+
+<a href="#" class="btn">
+Watch More
+</a>
+
+</div>
+
+<div class="drone-video">
+
+<video controls poster="wofa.jpg">
+
+<source src="videos.MP4" type="video/mp4">
+
+</video>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     VISITOR SECTION
+========================= -->
+
+<section class="visitors">
+
+<div class="section-title">
+
+<h2>Visitor Moments</h2>
+
+<p>
+Memories captured by tourists and explorers.
+</p>
+
+</div>
+
+<div class="visitor-container">
+
+<div class="visitor-card">
+
+<img src="tho.jpg">
+
+<h3>Adventure Experience</h3>
+
+<p>
+Visitors enjoying hiking and exploration around the caves and mountains.
+</p>
+
+</div>
+
+<div class="visitor-card">
+
+<img src="wings.jpg">
+
+<h3>Cultural Tour</h3>
+
+<p>
+Tourists learning about the rich history and cultural heritage of the park.
+</p>
+
+</div>
+
+<div class="visitor-card">
+
+<img src="geng.jpg">
+
+<h3>Photography Moments</h3>
+
+<p>
+Beautiful memories captured during scenic adventures and nature walks.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     CTA SECTION
+========================= -->
+
+<section class="cta">
+
+<h2>Create Your Own Memories</h2>
+
+<p>
+Visit Abetifi Stone Age Park and experience unforgettable adventures.
+</p>
+
+<a href="booking.html" class="btn">
+Book Your Visit
+</a>
+
+</section>
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+<h2>StoneAge Park</h2>
+
+<div class="socials">
+
+<i class="fab fa-facebook"></i>
+<i class="fab fa-instagram"></i>
+<i class="fab fa-youtube"></i>
+<i class="fab fa-tiktok"></i>
+
+</div>
+
+<p>
+© 2026 Abetifi Stone Age Park. All Rights Reserved.
+</p>
+
+</footer>
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+/* MOBILE MENU */
+
+const menuBtn = document.getElementById('menuBtn');
+const nav = document.getElementById('nav');
+
+menuBtn.onclick = () => {
+    nav.classList.toggle('active');
+};
+
+/* GALLERY FILTER */
+
+const filterButtons = document.querySelectorAll('.filter-btn');
+const galleryItems = document.querySelectorAll('.gallery-item');
+
+filterButtons.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+        /* ACTIVE BUTTON */
+
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        button.classList.add('active');
+
+        /* FILTER LOGIC */
+
+        const filter = button.getAttribute('data-filter');
+
+        galleryItems.forEach(item => {
+
+            if(filter === 'all'){
+
+                item.classList.remove('hide');
+
+            }
+
+            else if(item.classList.contains(filter)){
+
+                item.classList.remove('hide');
+
+            }
+
+            else{
+
+                item.classList.add('hide');
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
+```
