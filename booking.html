@@ -1,368 +1,173 @@
+
 <?php
+// =======================
+// BACKEND PHP LOGIC
+// =======================
 
-$conn = new mysqli("localhost","root","","tourdb");
+// Database connection
+$host = "localhost";
+$user = "root";
+$pass = "";
+$dbname = "tour_booking";
 
-if($conn->connect_error){
-    die("DB Error");
+$conn = new mysqli($host, $user, $pass, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-if(isset($_POST['bookTour'])){
-
-    $fullname = $_POST['fullname'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $country = $_POST['country'];
-    $tour_package = $_POST['tour_package'];
+// Handle booking form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
+    $fullname   = $_POST['fullname'];
+    $email      = $_POST['email'];
+    $phone      = $_POST['phone'];
+    $country    = $_POST['country'];
+    $package    = $_POST['package'];
     $start_date = $_POST['start_date'];
-    $end_date = $_POST['end_date'];
-    $people = $_POST['people'];
-    $rooms = $_POST['rooms'];
-    $hotel = $_POST['hotel'];
-    $reservation = $_POST['reservation'];
-    $special_note = $_POST['special_note'];
+    $end_date   = $_POST['end_date'];
+    $people     = $_POST['people'];
+    $rooms      = $_POST['rooms'];
+    $hotel      = $_POST['hotel'];
+    $reservation= $_POST['reservation'];
+    $message    = $_POST['message'];
 
-    $stmt = $conn->prepare("INSERT INTO bookings(
-        fullname,email,phone,country,tour_package,
-        start_date,end_date,people,rooms,hotel,reservation,special_note
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-
-    $stmt->bind_param(
-        "ssssssiissss",
-        $fullname,$email,$phone,$country,$tour_package,
-        $start_date,$end_date,$people,$rooms,$hotel,$reservation,$special_note
-    );
-
+    // Insert into database securely
+    $stmt = $conn->prepare("INSERT INTO bookings (fullname,email,phone,country,package,start_date,end_date,people,rooms,hotel,reservation,message) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+    $stmt->bind_param("ssssssssssss", $fullname,$email,$phone,$country,$package,$start_date,$end_date,$people,$rooms,$hotel,$reservation,$message);
     $stmt->execute();
 
-    $msg = "New Booking: $fullname - $tour_package";
+    // Email notification
+    $to = "admin@example.com";
+    $subject = "New Tour Booking Received";
+    $body = "Booking Details:\n\nName: $fullname\nEmail: $email\nPhone: $phone\nCountry: $country\nPackage: $package\nStart: $start_date\nEnd: $end_date\nPeople: $people\nRooms: $rooms\nHotel: $hotel\nReservation: $reservation\nMessage: $message";
+    mail($to, $subject, $body);
 
-    mail("yourgmail@gmail.com","Tour Booking",$msg,"From: tour@site.com");
+    // SMS notification (Twilio example)
+    // require 'vendor/autoload.php';
+    // use Twilio\Rest\Client;
+    // $sid = "TWILIO_SID";
+    // $token = "TWILIO_TOKEN";
+    // $twilio = new Client($sid, $token);
+    // $twilio->messages->create("+233XXXXXXXXX", [
+    //     "from" => "+1XXXXXXXXXX",
+    //     "body" => "New Tour Booking Received. Check your email inbox."
+    // ]);
 
-    echo "<script>alert('Booking Successful');</script>";
+    echo "<script>alert('Booking Successful!');</script>";
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tour Booking System</title>
-
-<style>
-
-/* ================= NAVBAR ================= */
-
-.navbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px 8%;
-    background:rgba(0,0,0,0.7);
-    position:fixed;
-    width:100%;
-    top:0;
-    z-index:1000;
-    backdrop-filter:blur(10px);
-}
-
-.navbar h2{
-    color:#00d9ff;
-}
-
-.navbar ul{
-    list-style:none;
-    display:flex;
-    gap:20px;
-}
-
-.navbar ul li{
-    color:white;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-.navbar ul li:hover{
-    color:#00d9ff;
-}
-
-/* ================= HERO BACKGROUND ================= */
-
-.hero{
-    height:70vh;
-    background:
-    linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
-    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
-    background-size:cover;
-    background-position:center;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    color:white;
-    padding-top:60px;
-}
-
-.hero h1{
-    font-size:45px;
-    animation:fade 1s ease;
-}
-
-@keyframes fade{
-    from{opacity:0; transform:translateY(-20px);}
-    to{opacity:1; transform:translateY(0);}
-}
-
-/* ================= TOUR GRID ================= */
-
-.tours{
-    padding:60px 8%;
-    background:#07121f;
-}
-
-.tour-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-    gap:20px;
-}
-
-.card{
-    background:#111b2d;
-    border-radius:14px;
-    overflow:hidden;
-    transition:0.3s;
-}
-
-.card:hover{
-    transform:translateY(-8px);
-}
-
-.card img{
-    width:100%;
-    height:160px;
-    object-fit:cover;
-}
-
-.card-content{
-    padding:15px;
-    text-align:center;
-}
-
-.price{
-    color:#00d9ff;
-    font-size:20px;
-    margin:8px 0;
-}
-
-button{
-    width:100%;
-    padding:10px;
-    border:none;
-    background:#00d9ff;
-    color:black;
-    font-weight:bold;
-    cursor:pointer;
-    border-radius:8px;
-}
-
-/* ================= FORM OVERLAY ================= */
-
-.overlay{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.85);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:1000;
-}
-
-.form-box{
-    width:95%;
-    max-width:900px;
-    background:white;
-    padding:20px;
-    border-radius:12px;
-}
-
-/* GRID FORM */
-
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-
-.form-grid input,
-.form-grid select,
-.form-grid textarea{
-    padding:8px;
-    border:1px solid #ccc;
-    border-radius:6px;
-    font-size:13px;
-}
-
-textarea{
-    height:70px;
-    grid-column:span 3;
-}
-
-.full{
-    grid-column:span 3;
-}
-
-.submit-btn{
-    grid-column:span 3;
-    padding:10px;
-    background:#00d9ff;
-    border:none;
-    font-weight:bold;
-    cursor:pointer;
-    border-radius:8px;
-}
-
-/* ================= FOOTER ================= */
-
-.footer{
-    background:#050a12;
-    color:white;
-    text-align:center;
-    padding:30px;
-    margin-top:50px;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:768px){
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-    textarea,.full,.submit-btn{
-        grid-column:1;
-    }
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <title>Premium Tour Booking</title>
+  <style>
+    /* =======================
+       CSS STYLING
+    ======================= */
+    body {margin:0;font-family:Arial, sans-serif;background:#f9f9f9;}
+    nav {position:absolute;top:0;width:100%;display:flex;justify-content:space-between;padding:20px;color:#fff;z-index:100;}
+    nav a {color:#fff;text-decoration:none;margin:0 10px;font-weight:bold;}
+    .hero {height:100vh;position:relative;overflow:hidden;}
+    .hero img {width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;animation:slide 20s infinite;}
+    .overlay {position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);}
+    .hero-text {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;text-align:center;}
+    .hero-text h1 {font-size:3em;margin:0;}
+    .hero-text p {font-size:1.2em;}
+    .hero-text button {padding:15px 30px;background:#ff6600;color:#fff;border:none;border-radius:5px;cursor:pointer;}
+    .packages {padding:50px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;}
+    .card {background:#fff;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1);overflow:hidden;transition:transform 0.3s;}
+    .card:hover {transform:translateY(-10px);}
+    .card img {width:100%;height:200px;object-fit:cover;}
+    .card-body {padding:20px;}
+    .card-body h3 {margin:0;}
+    .card-body p {color:#555;}
+    .card-body button {margin-top:10px;padding:10px 20px;background:#007BFF;color:#fff;border:none;border-radius:5px;cursor:pointer;}
+    .popup {display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+    .popup-content {background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:10px;width:400px;}
+    .popup-content input, .popup-content select, .popup-content textarea {width:100%;padding:10px;margin:5px 0;border-radius:5px;border:1px solid #ccc;}
+    footer {background:#222;color:#fff;padding:20px;text-align:center;}
+    @keyframes slide {0%{opacity:1;}25%{opacity:0;}50%{opacity:1;}75%{opacity:0;}100%{opacity:1;}}
+  </style>
 </head>
-
 <body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">TourBooking</div>
+    <div class="links">
+      <a href="#">Home</a>
+      <a href="#">Packages</a>
+      <a href="#">Contact</a>
+    </div>
+  </nav>
 
-<!-- NAVBAR -->
-<div class="navbar">
-    <h2>TravelPro</h2>
-    <ul>
-        <li>Home</li>
-        <li>Tours</li>
-        <li>Bookings</li>
-        <li>Contact</li>
-    </ul>
-</div>
+  <!-- Hero Section -->
+  <div class="hero">
+    <img src="hero1.jpg" alt="Hero">
+    <div class="overlay"></div>
+    <div class="hero-text">
+      <h1>Discover Your Next Adventure</h1>
+      <p>Book premium tours worldwide</p>
+      <button onclick="document.querySelector('.popup').style.display='flex'">Book Now</button>
+    </div>
+  </div>
 
-<!-- HERO -->
-<div class="hero">
-    <h1>Explore The World With Us</h1>
-</div>
+  <!-- Tour Packages -->
+  <section class="packages">
+    <div class="card">
+      <img src="tour1.jpg" alt="Tour">
+      <div class="card-body">
+        <h3>Paris Getaway</h3>
+        <p>$1200 - 5 Days</p>
+        <button onclick="openBooking('Paris Getaway')">Book Now</button>
+      </div>
+    </div>
+    <div class="card">
+      <img src="tour2.jpg" alt="Tour">
+      <div class="card-body">
+        <h3>Safari Adventure</h3>
+        <p>$1500 - 7 Days</p>
+        <button onclick="openBooking('Safari Adventure')">Book Now</button>
+      </div>
+    </div>
+  </section>
 
-<!-- TOURS -->
-<div class="tours">
+  <!-- Popup Booking Form -->
+  <div class="popup">
+    <div class="popup-content">
+      <form method="POST">
+        <input type="text" name="fullname" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="text" name="phone" placeholder="Phone Number" required>
+        <input type="text" name="country" placeholder="Country" required>
+        <input type="text" id="package" name="package" readonly>
+        <input type="date" name="start_date" required>
+        <input type="date" name="end_date" required>
+        <input type="number" name="people" placeholder="Number of People" required>
+        <input type="number" name="rooms" placeholder="Number of Rooms" required>
+        <select name="hotel" required>
+          <option>3-Star</option>
+          <option>4-Star</option>
+          <option>5-Star</option>
+        </select>
+        <select name="reservation" required>
+          <option>Full Package</option>
+          <option>Hotel Only</option>
+          <option>Transport Only</option>
+        </select>
+        <textarea name="message" placeholder="Special Message"></textarea>
+        <button type="submit" name="submit_booking">Submit Booking</button>
+      </form>
+    </div>
+  </div>
 
-<div class="tour-grid">
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 TourBooking. All rights reserved.</p>
+    <p>Contact: info@example.com | +233 123 456 789</p>
+    <p>Follow us: Facebook | Instagram | Twitter</p>
+  </footer>
 
-<div class="card">
-<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">
-<div class="card-content">
-<h3>Beach Tour</h3>
-<div class="price">$250</div>
-<button onclick="openForm('Beach Tour')">Book</button>
-</div>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b">
-<div class="card-content">
-<h3>Mountain Tour</h3>
-<div class="price">$450</div>
-<button onclick="openForm('Mountain Tour')">Book</button>
-</div>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
-<div class="card-content">
-<h3>Safari Tour</h3>
-<div class="price">$700</div>
-<button onclick="openForm('Safari Tour')">Book</button>
-</div>
-</div>
-
-</div>
-
-</div>
-
-<!-- FORM -->
-<div class="overlay" id="overlay">
-
-<div class="form-box">
-
-<form method="POST">
-
-<div class="form-grid">
-
-<input name="fullname" placeholder="Full Name" required>
-<input name="email" placeholder="Email" required>
-<input name="phone" placeholder="Phone" required>
-
-<input name="country" placeholder="Country" required>
-
-<input type="date" name="start_date" required>
-<input type="date" name="end_date" required>
-
-<input type="number" name="people" placeholder="People">
-<input type="number" name="rooms" placeholder="Rooms">
-
-<select name="hotel">
-<option>Luxury Hotel</option>
-<option>Standard Hotel</option>
-</select>
-
-<select name="reservation">
-<option>Single</option>
-<option>Group</option>
-</select>
-
-<input type="hidden" name="tour_package" id="tour">
-
-<textarea name="special_note" placeholder="Message"></textarea>
-
-<button class="submit-btn" name="bookTour">Confirm Booking</button>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-    <p>© 2026 TravelPro | All Rights Reserved</p>
-</div>
-
-<script>
-
-function openForm(tour){
-    document.getElementById("overlay").style.display="flex";
-    document.getElementById("tour").value=tour;
-}
-
-</script>
-
-</body>
-</html>
+  <script>
+    // =======================
+    // JAVASCRIPT
