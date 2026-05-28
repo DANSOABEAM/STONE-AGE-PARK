@@ -1,173 +1,605 @@
-
-<?php
-// =======================
-// BACKEND PHP LOGIC
-// =======================
-
-// Database connection
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "tour_booking";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Handle booking form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_booking'])) {
-    $fullname   = $_POST['fullname'];
-    $email      = $_POST['email'];
-    $phone      = $_POST['phone'];
-    $country    = $_POST['country'];
-    $package    = $_POST['package'];
-    $start_date = $_POST['start_date'];
-    $end_date   = $_POST['end_date'];
-    $people     = $_POST['people'];
-    $rooms      = $_POST['rooms'];
-    $hotel      = $_POST['hotel'];
-    $reservation= $_POST['reservation'];
-    $message    = $_POST['message'];
-
-    // Insert into database securely
-    $stmt = $conn->prepare("INSERT INTO bookings (fullname,email,phone,country,package,start_date,end_date,people,rooms,hotel,reservation,message) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-    $stmt->bind_param("ssssssssssss", $fullname,$email,$phone,$country,$package,$start_date,$end_date,$people,$rooms,$hotel,$reservation,$message);
-    $stmt->execute();
-
-    // Email notification
-    $to = "admin@example.com";
-    $subject = "New Tour Booking Received";
-    $body = "Booking Details:\n\nName: $fullname\nEmail: $email\nPhone: $phone\nCountry: $country\nPackage: $package\nStart: $start_date\nEnd: $end_date\nPeople: $people\nRooms: $rooms\nHotel: $hotel\nReservation: $reservation\nMessage: $message";
-    mail($to, $subject, $body);
-
-    // SMS notification (Twilio example)
-    // require 'vendor/autoload.php';
-    // use Twilio\Rest\Client;
-    // $sid = "TWILIO_SID";
-    // $token = "TWILIO_TOKEN";
-    // $twilio = new Client($sid, $token);
-    // $twilio->messages->create("+233XXXXXXXXX", [
-    //     "from" => "+1XXXXXXXXXX",
-    //     "body" => "New Tour Booking Received. Check your email inbox."
-    // ]);
-
-    echo "<script>alert('Booking Successful!');</script>";
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Premium Tour Booking</title>
-  <style>
-    /* =======================
-       CSS STYLING
-    ======================= */
-    body {margin:0;font-family:Arial, sans-serif;background:#f9f9f9;}
-    nav {position:absolute;top:0;width:100%;display:flex;justify-content:space-between;padding:20px;color:#fff;z-index:100;}
-    nav a {color:#fff;text-decoration:none;margin:0 10px;font-weight:bold;}
-    .hero {height:100vh;position:relative;overflow:hidden;}
-    .hero img {width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;animation:slide 20s infinite;}
-    .overlay {position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);}
-    .hero-text {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;text-align:center;}
-    .hero-text h1 {font-size:3em;margin:0;}
-    .hero-text p {font-size:1.2em;}
-    .hero-text button {padding:15px 30px;background:#ff6600;color:#fff;border:none;border-radius:5px;cursor:pointer;}
-    .packages {padding:50px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;}
-    .card {background:#fff;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1);overflow:hidden;transition:transform 0.3s;}
-    .card:hover {transform:translateY(-10px);}
-    .card img {width:100%;height:200px;object-fit:cover;}
-    .card-body {padding:20px;}
-    .card-body h3 {margin:0;}
-    .card-body p {color:#555;}
-    .card-body button {margin-top:10px;padding:10px 20px;background:#007BFF;color:#fff;border:none;border-radius:5px;cursor:pointer;}
-    .popup {display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
-    .popup-content {background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:10px;width:400px;}
-    .popup-content input, .popup-content select, .popup-content textarea {width:100%;padding:10px;margin:5px 0;border-radius:5px;border:1px solid #ccc;}
-    footer {background:#222;color:#fff;padding:20px;text-align:center;}
-    @keyframes slide {0%{opacity:1;}25%{opacity:0;}50%{opacity:1;}75%{opacity:0;}100%{opacity:1;}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TravelPro Contact Page</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#08111f;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar{
+
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:100%;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:18px 8%;
+
+    background:rgba(0,0,0,0.35);
+
+    backdrop-filter:blur(10px);
+
+    z-index:1000;
+}
+
+.logo{
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    color:#00d9ff;
+}
+
+.nav-links{
+
+    display:flex;
+    gap:28px;
+}
+
+.nav-links a{
+
+    color:white;
+
+    text-decoration:none;
+
+    transition:0.4s;
+
+    font-size:15px;
+}
+
+.nav-links a:hover{
+    color:#00d9ff;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+
+    height:55vh;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.65),
+    rgba(0,0,0,0.65)),
+
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    animation:zoom 12s infinite alternate;
+}
+
+@keyframes zoom{
+
+from{
+    background-size:100%;
+}
+
+to{
+    background-size:110%;
+}
+
+}
+
+.hero-content{
+    width:90%;
+}
+
+.hero-content h1{
+
+    font-size:65px;
+
+    margin-bottom:15px;
+
+    animation:fadeDown 1s ease;
+}
+
+.hero-content p{
+
+    font-size:18px;
+
+    color:#ddd;
+}
+
+@keyframes fadeDown{
+
+from{
+    opacity:0;
+    transform:translateY(-40px);
+}
+
+to{
+    opacity:1;
+    transform:translateY(0);
+}
+
+}
+
+/* =========================
+   CONTACT SECTION
+========================= */
+
+.contact-section{
+
+    padding:100px 8%;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(350px,1fr));
+
+    gap:40px;
+}
+
+/* LEFT */
+
+.contact-info{
+
+    animation:slideLeft 1s ease;
+}
+
+.contact-info h2{
+
+    font-size:45px;
+
+    margin-bottom:20px;
+}
+
+.contact-info p{
+
+    color:#ccc;
+
+    line-height:1.8;
+
+    margin-bottom:35px;
+}
+
+/* INFO BOX */
+
+.info-box{
+
+    display:flex;
+
+    gap:18px;
+
+    margin-bottom:25px;
+}
+
+.info-box i{
+
+    width:60px;
+    height:60px;
+
+    background:#00d9ff;
+
+    color:black;
+
+    border-radius:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:22px;
+
+    transition:0.4s;
+}
+
+.info-box:hover i{
+    transform:rotate(360deg);
+}
+
+.info-box h3{
+    margin-bottom:6px;
+}
+
+.info-box p{
+    margin:0;
+}
+
+/* RIGHT IMAGE CARD */
+
+.contact-image{
+
+    position:relative;
+
+    animation:slideRight 1s ease;
+}
+
+.contact-image img{
+
+    width:100%;
+
+    border-radius:25px;
+
+    height:100%;
+
+    object-fit:cover;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,0.5);
+}
+
+/* FLOATING CARD */
+
+.floating-card{
+
+    position:absolute;
+
+    bottom:30px;
+    left:30px;
+
+    background:rgba(255,255,255,0.1);
+
+    backdrop-filter:blur(15px);
+
+    padding:25px;
+
+    border-radius:20px;
+
+    width:280px;
+
+    animation:float 3s ease-in-out infinite;
+}
+
+.floating-card h3{
+
+    margin-bottom:10px;
+
+    color:#00d9ff;
+}
+
+.floating-card p{
+
+    color:#ddd;
+
+    line-height:1.6;
+}
+
+@keyframes float{
+
+0%{
+    transform:translateY(0px);
+}
+
+50%{
+    transform:translateY(-10px);
+}
+
+100%{
+    transform:translateY(0px);
+}
+
+}
+
+/* =========================
+   SOCIAL ICONS
+========================= */
+
+.socials{
+
+    margin-top:30px;
+
+    display:flex;
+
+    gap:15px;
+}
+
+.socials a{
+
+    width:50px;
+    height:50px;
+
+    background:#101a2c;
+
+    border-radius:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    text-decoration:none;
+
+    transition:0.4s;
+}
+
+.socials a:hover{
+
+    background:#00d9ff;
+
+    color:black;
+
+    transform:translateY(-5px);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+
+    background:#050b14;
+
+    padding:35px;
+
+    text-align:center;
+}
+
+.footer p{
+    color:#aaa;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes slideLeft{
+
+from{
+    opacity:0;
+    transform:translateX(-60px);
+}
+
+to{
+    opacity:1;
+    transform:translateX(0);
+}
+
+}
+
+@keyframes slideRight{
+
+from{
+    opacity:0;
+    transform:translateX(60px);
+}
+
+to{
+    opacity:1;
+    transform:translateX(0);
+}
+
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+.hero-content h1{
+    font-size:40px;
+}
+
+.contact-info h2{
+    font-size:34px;
+}
+
+.nav-links{
+    display:none;
+}
+
+.floating-card{
+
+    position:relative;
+
+    left:0;
+    bottom:0;
+
+    width:100%;
+
+    margin-top:20px;
+}
+
+}
+
+</style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav>
-    <div class="logo">TourBooking</div>
-    <div class="links">
-      <a href="#">Home</a>
-      <a href="#">Packages</a>
-      <a href="#">Contact</a>
-    </div>
-  </nav>
 
-  <!-- Hero Section -->
-  <div class="hero">
-    <img src="hero1.jpg" alt="Hero">
-    <div class="overlay"></div>
-    <div class="hero-text">
-      <h1>Discover Your Next Adventure</h1>
-      <p>Book premium tours worldwide</p>
-      <button onclick="document.querySelector('.popup').style.display='flex'">Book Now</button>
-    </div>
-  </div>
+<!-- =========================
+     NAVBAR
+========================= -->
 
-  <!-- Tour Packages -->
-  <section class="packages">
-    <div class="card">
-      <img src="tour1.jpg" alt="Tour">
-      <div class="card-body">
-        <h3>Paris Getaway</h3>
-        <p>$1200 - 5 Days</p>
-        <button onclick="openBooking('Paris Getaway')">Book Now</button>
-      </div>
-    </div>
-    <div class="card">
-      <img src="tour2.jpg" alt="Tour">
-      <div class="card-body">
-        <h3>Safari Adventure</h3>
-        <p>$1500 - 7 Days</p>
-        <button onclick="openBooking('Safari Adventure')">Book Now</button>
-      </div>
-    </div>
-  </section>
+<nav class="navbar">
 
-  <!-- Popup Booking Form -->
-  <div class="popup">
-    <div class="popup-content">
-      <form method="POST">
-        <input type="text" name="fullname" placeholder="Full Name" required>
-        <input type="email" name="email" placeholder="Email Address" required>
-        <input type="text" name="phone" placeholder="Phone Number" required>
-        <input type="text" name="country" placeholder="Country" required>
-        <input type="text" id="package" name="package" readonly>
-        <input type="date" name="start_date" required>
-        <input type="date" name="end_date" required>
-        <input type="number" name="people" placeholder="Number of People" required>
-        <input type="number" name="rooms" placeholder="Number of Rooms" required>
-        <select name="hotel" required>
-          <option>3-Star</option>
-          <option>4-Star</option>
-          <option>5-Star</option>
-        </select>
-        <select name="reservation" required>
-          <option>Full Package</option>
-          <option>Hotel Only</option>
-          <option>Transport Only</option>
-        </select>
-        <textarea name="message" placeholder="Special Message"></textarea>
-        <button type="submit" name="submit_booking">Submit Booking</button>
-      </form>
-    </div>
-  </div>
+<div class="logo">TravelPro</div>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2026 TourBooking. All rights reserved.</p>
-    <p>Contact: info@example.com | +233 123 456 789</p>
-    <p>Follow us: Facebook | Instagram | Twitter</p>
-  </footer>
+<div class="nav-links">
 
-  <script>
-    // =======================
-    // JAVASCRIPT
+<a href="#">Home</a>
+<a href="#">Tours</a>
+<a href="#">Booking</a>
+<a href="#">Contact</a>
+
+</div>
+
+</nav>
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>Contact Us</h1>
+
+<p>
+Let’s plan your next unforgettable adventure.
+</p>
+
+</div>
+
+</section>
+
+<!-- =========================
+     CONTACT SECTION
+========================= -->
+
+<section class="contact-section">
+
+<!-- LEFT -->
+
+<div class="contact-info">
+
+<h2>Get In Touch</h2>
+
+<p>
+We are always ready to help you plan
+luxury vacations, exciting adventures,
+and memorable travel experiences around
+the world.
+</p>
+
+<!-- INFO -->
+
+<div class="info-box">
+
+<i class="fa fa-phone"></i>
+
+<div>
+
+<h3>Phone</h3>
+
+<p>+233 24 000 0000</p>
+
+</div>
+
+</div>
+
+<div class="info-box">
+
+<i class="fa fa-envelope"></i>
+
+<div>
+
+<h3>Email</h3>
+
+<p>travelpro@gmail.com</p>
+
+</div>
+
+</div>
+
+<div class="info-box">
+
+<i class="fa fa-location-dot"></i>
+
+<div>
+
+<h3>Location</h3>
+
+<p>Accra, Ghana</p>
+
+</div>
+
+</div>
+
+<!-- SOCIALS -->
+
+<div class="socials">
+
+<a href="#">
+<i class="fab fa-facebook-f"></i>
+</a>
+
+<a href="#">
+<i class="fab fa-instagram"></i>
+</a>
+
+<a href="#">
+<i class="fab fa-twitter"></i>
+</a>
+
+<a href="#">
+<i class="fab fa-youtube"></i>
+</a>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="contact-image">
+
+<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+
+<div class="floating-card">
+
+<h3>Travel With Comfort</h3>
+
+<p>
+Discover beautiful destinations with
+luxury services and unforgettable
+experiences around the world.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer class="footer">
+
+<p>
+© 2026 TravelPro Tours. All Rights Reserved.
+</p>
+
+</footer>
+
+</body>
+</html>
