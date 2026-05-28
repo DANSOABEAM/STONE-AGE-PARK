@@ -35,42 +35,26 @@ body{
 /* =========================
    NAVBAR
 ========================= */
-a{
-    text-decoration: none;
-}
 
-nav ul{
-    display:flex;
-    list-style:none;
-    gap:30px;
-}
+.navbar{
 
-nav ul li a{
-    color:white;
-    text-decoration:none;
-    position:relative;
-    transition:0.4s;
-}
-
-nav ul li a::after{
-    content:'';
-    position:absolute;
+    position:fixed;
+    top:0;
     left:0;
-    bottom:-5px;
-    width:0%;
-    height:2px;
-    background:#facc15;
-    transition:0.4s;
-}
 
-nav ul li a:hover::after{
     width:100%;
-}
 
-.menu-btn{
-    display:none;
-    font-size:28px;
-    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:18px 8%;
+
+    background:rgba(0,0,0,0.35);
+
+    backdrop-filter:blur(10px);
+
+    z-index:1000;
 }
 
 .logo{
@@ -463,17 +447,19 @@ to{
      NAVBAR
 ========================= -->
 
-<div class="logo">StoneAge Park</div>
+<nav class="navbar">
 
-<nav id="nav">
-<ul>
-<li><a href="index.html">Home</a></li>
-<li><a href="about.html">About</a></li>
-<li><a href="explore.html">Explore</a></li>
-<li><a href="gallery.html">Gallery</a></li>
-<li><a href="booking.html">Booking</a></li>
-<li><a href="contact.html">Contact</a></li>
-</ul>
+<div class="logo">Stone-Age-Park</div>
+
+<div class="nav-links">
+
+<a href="#">Home</a>
+<a href="#">Tours</a>
+<a href="#">Booking</a>
+<a href="#">Contact</a>
+
+</div>
+
 </nav>
 
 <!-- =========================
