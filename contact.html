@@ -35,26 +35,42 @@ body{
 /* =========================
    NAVBAR
 ========================= */
+a{
+    text-decoration: none;
+}
 
-.navbar{
-
-    position:fixed;
-    top:0;
-    left:0;
-
-    width:100%;
-
+nav ul{
     display:flex;
-    justify-content:space-between;
-    align-items:center;
+    list-style:none;
+    gap:30px;
+}
 
-    padding:18px 8%;
+nav ul li a{
+    color:white;
+    text-decoration:none;
+    position:relative;
+    transition:0.4s;
+}
 
-    background:rgba(0,0,0,0.35);
+nav ul li a::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#facc15;
+    transition:0.4s;
+}
 
-    backdrop-filter:blur(10px);
+nav ul li a:hover::after{
+    width:100%;
+}
 
-    z-index:1000;
+.menu-btn{
+    display:none;
+    font-size:28px;
+    cursor:pointer;
 }
 
 .logo{
